@@ -1,10 +1,11 @@
 package calories
 
 import (
+	"bufio"
+	"bytes"
 	"os"
 	"sort"
 	"strconv"
-	"strings"
 )
 
 // CalorieList holds the total calories
@@ -45,39 +46,58 @@ func (c CalorieList) CalculateTopThreeHighestCalories() int {
 	return out
 }
 
+//func convertToSliceOfTotals(data []byte) []int {
+//	input := string(data)
+//
+//	// Split on the empty lines
+//	split := strings.Split(input, "\n\n")
+//
+//	// Now they're grouped by the blank newline, split on the remaining newlines
+//	list := make([][]string, len(split))
+//	ls := make([][]int, len(split))
+//	for i, s := range split {
+//		t := strings.Split(s, "\n")
+//
+//		// Deal with leading/lagging newlines
+//		if t[0] == "" {
+//			list[i] = t[1:]
+//		} else if t[len(t)-1] == "" {
+//			list[i] = t[:len(t)-1]
+//		} else {
+//			list[i] = strings.Split(s, "\n")
+//		}
+//
+//		for _, s2 := range list[i] {
+//			n, _ := strconv.Atoi(s2)
+//			ls[i] = append(ls[i], n)
+//		}
+//	}
+//
+//	out := make([]int, len(ls))
+//	for i, sn := range ls {
+//		for _, sv := range sn {
+//			out[i] = out[i] + sv
+//		}
+//	}
+//
+//	return out
+//}
+
 func convertToSliceOfTotals(data []byte) []int {
-	input := string(data)
-
-	// Split on the empty lines
-	split := strings.Split(input, "\n\n")
-
-	// Now they're grouped by the blank newline, split on the remaining newlines
-	list := make([][]string, len(split))
-	ls := make([][]int, len(split))
-	for i, s := range split {
-		t := strings.Split(s, "\n")
-
-		// Deal with leading/lagging newlines
-		if t[0] == "" {
-			list[i] = t[1:]
-		} else if t[len(t)-1] == "" {
-			list[i] = t[:len(t)-1]
-		} else {
-			list[i] = strings.Split(s, "\n")
+	r := bytes.NewReader(data)
+	scanner := bufio.NewScanner(r)
+	arr := make([]int, 1)
+	i := 0
+	for scanner.Scan() {
+		t := scanner.Text()
+		if t == "" && arr[i] != 0 {
+			arr = append(arr, 0)
+			i++
+			continue
 		}
-
-		for _, s2 := range list[i] {
-			n, _ := strconv.Atoi(s2)
-			ls[i] = append(ls[i], n)
-		}
+		n, _ := strconv.Atoi(t)
+		arr[i] = arr[i] + n
 	}
 
-	out := make([]int, len(ls))
-	for i, sn := range ls {
-		for _, sv := range sn {
-			out[i] = out[i] + sv
-		}
-	}
-
-	return out
+	return arr
 }
