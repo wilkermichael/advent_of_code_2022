@@ -8,7 +8,7 @@ fi
 
 # Check if a module name was provided
 if [ -z "$2" ]; then
-  echo "Error: missing project name"
+  echo "Error: missing module name"
   exit 1
 fi
 
